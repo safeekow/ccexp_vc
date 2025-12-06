@@ -1,0 +1,141 @@
+{
+  "name": "ccexp-vscode",
+  "displayName": "Claude Code Explorer",
+  "description": "VSCode拡張機能でClaude Codeの設定ファイルとスラッシュコマンドを探索・管理",
+  "version": "0.1.0",
+  "publisher": "Koichi Sano",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/safeekow/ccexp_vc"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "ccexp.openExplorer",
+        "title": "Claude Code Explorer: 設定エクスプローラーを開く",
+        "icon": "$(file-code)"
+      },
+      {
+        "command": "ccexp.refresh",
+        "title": "Claude Code Explorer: 再スキャン",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "ccexp.openFile",
+        "title": "Claude Code Explorer: ファイルを開く"
+      },
+      {
+        "command": "ccexp.createSlashCommand",
+        "title": "Claude Code Explorer: スラッシュコマンドを作成",
+        "icon": "$(add)"
+      },
+      {
+        "command": "ccexp.createClaudeMd",
+        "title": "Claude Code Explorer: CLAUDE.mdを作成"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "ccexp-explorer",
+          "title": "Claude Code Explorer",
+          "icon": "$(symbol-misc)"
+        }
+      ]
+    },
+    "views": {
+      "ccexp-explorer": [
+        {
+          "id": "ccexp.claudeFiles",
+          "name": "CLAUDE.md ファイル"
+        },
+        {
+          "id": "ccexp.slashCommands",
+          "name": "スラッシュコマンド"
+        },
+        {
+          "id": "ccexp.subAgents",
+          "name": "サブエージェント"
+        },
+        {
+          "id": "ccexp.settings",
+          "name": "設定ファイル"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "ccexp.refresh",
+          "when": "view =~ /ccexp\\./",
+          "group": "navigation"
+        },
+        {
+          "command": "ccexp.createSlashCommand",
+          "when": "view == ccexp.slashCommands",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "ccexp.openFile",
+          "when": "view =~ /ccexp\\./",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Claude Code Explorer",
+      "properties": {
+        "ccexp.showHiddenFiles": {
+          "type": "boolean",
+          "default": false,
+          "description": "隠しファイルを表示するかどうか"
+        },
+        "ccexp.scanRecursively": {
+          "type": "boolean",
+          "default": true,
+          "description": "サブディレクトリを再帰的にスキャンするかどうか"
+        },
+        "ccexp.autoRefresh": {
+          "type": "boolean",
+          "default": true,
+          "description": "ファイル変更時に自動的に再スキャンするかどうか"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --minify",
+    "watch": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --watch",
+    "pretest": "npm run compile",
+    "test": "node ./dist/test/runTest.js",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vscode/test-electron": "^2.3.8",
+    "esbuild": "^0.19.8",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2"
+  }
+}
