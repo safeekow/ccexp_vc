@@ -3,7 +3,7 @@
   "displayName": "Claude Code Explorer",
   "description": "VSCode拡張機能でClaude Codeの設定ファイルとスラッシュコマンドを探索・管理",
   "version": "0.1.0",
-  "publisher": "Koichi Sano",
+  "publisher": "safeekow",
   "license": "MIT",
   "repository": {
     "type": "git",
