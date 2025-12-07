@@ -1,0 +1,27 @@
+# ソースファイル（ビルド後のdistのみ必要）
+src/**
+tsconfig.json
+
+# 開発用ファイル
+.vscode/**
+.github/**
+.gitlab-ci.yml
+.gitignore
+
+# ドキュメント（READMEとLICENSEは含める）
+docs/**
+claudedocs/**
+
+# 開発用依存関係
+node_modules/**
+
+# ビルド成果物以外
+*.vsix
+*.map
+
+# パッケージ管理
+package-lock.json
+
+# テスト
+**/*.test.ts
+**/test/**
