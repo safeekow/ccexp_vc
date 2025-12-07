@@ -4,6 +4,7 @@
   "description": "VSCode拡張機能でClaude Codeの設定ファイルとスラッシュコマンドを探索・管理",
   "version": "0.1.0",
   "publisher": "safeekow",
+  "icon": "images/icon.png",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -50,7 +51,7 @@
         {
           "id": "ccexp-explorer",
           "title": "Claude Code Explorer",
-          "icon": "$(symbol-misc)"
+          "icon": "images/activitybar-icon.svg"
         }
       ]
     },

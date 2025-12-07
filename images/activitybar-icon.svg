@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+  <!-- スターバースト（虫眼鏡の周りに配置） -->
+  <g transform="translate(12, 12) scale(1.4)">
+    <!-- 8本の放射線 -->
+    <line x1="0" y1="-8" x2="0" y2="-5" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="5.7" y1="-5.7" x2="3.5" y2="-3.5" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="8" y1="0" x2="5" y2="0" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="5.7" y1="5.7" x2="3.5" y2="3.5" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="0" y1="8" x2="0" y2="5" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="-5.7" y1="5.7" x2="-3.5" y2="3.5" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="-8" y1="0" x2="-5" y2="0" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="-5.7" y1="-5.7" x2="-3.5" y2="-3.5" stroke="#C5C5C5" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+
+  <!-- 虫眼鏡（レンズが中央） -->
+  <g transform="translate(12, 12) scale(1.4)">
+    <circle cx="0" cy="0" r="3.5" fill="none" stroke="#C5C5C5" stroke-width="1.5"/>
+    <line x1="3.2" y1="3.2" x2="8" y2="8" stroke="#C5C5C5" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D97706"/>
+      <stop offset="100%" style="stop-color:#C15F3C"/>
+    </linearGradient>
+  </defs>
+  <!-- 背景 -->
+  <rect width="128" height="128" rx="20" fill="url(#bg)"/>
+
+  <!-- Claudeスタイルのスターバースト（虫眼鏡の周りに配置） -->
+  <g transform="translate(64, 64)">
+    <!-- 8本の放射線 -->
+    <line x1="0" y1="-42" x2="0" y2="-28" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line x1="30" y1="-30" x2="20" y2="-20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line x1="42" y1="0" x2="28" y2="0" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line x1="30" y1="30" x2="20" y2="20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line x1="0" y1="42" x2="0" y2="28" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line x1="-30" y1="30" x2="-20" y2="20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line x1="-42" y1="0" x2="-28" y2="0" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line x1="-30" y1="-30" x2="-20" y2="-20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+  </g>
+
+  <!-- 虫眼鏡（レンズが中央、持ち手を長く） -->
+  <g transform="translate(64, 64)">
+    <!-- 虫眼鏡のレンズ -->
+    <circle cx="0" cy="0" r="18" fill="none" stroke="#FFF" stroke-width="5"/>
+    <!-- 虫眼鏡の柄（長く） -->
+    <line x1="13" y1="13" x2="42" y2="42" stroke="#FFF" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>
