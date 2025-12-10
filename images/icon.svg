@@ -1,31 +1,165 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#D97706"/>
-      <stop offset="100%" style="stop-color:#C15F3C"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg10"
+   sodipodi:docname="icon.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview10"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="6.5"
+     inkscape:cx="64"
+     inkscape:cy="63.923077"
+     inkscape:window-width="1888"
+     inkscape:window-height="1186"
+     inkscape:window-x="800"
+     inkscape:window-y="155"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg10" />
+  <defs
+     id="defs2">
+    <linearGradient
+       id="bg"
+       x1="0%"
+       y1="0%"
+       x2="100%"
+       y2="100%">
+      <stop
+         offset="0%"
+         style="stop-color:#D97706"
+         id="stop1" />
+      <stop
+         offset="100%"
+         style="stop-color:#C15F3C"
+         id="stop2" />
     </linearGradient>
   </defs>
   <!-- 背景 -->
-  <rect width="128" height="128" rx="20" fill="url(#bg)"/>
-
+  <rect
+     width="128"
+     height="128"
+     rx="20"
+     fill="url(#bg)"
+     id="rect2" />
   <!-- Claudeスタイルのスターバースト（虫眼鏡の周りに配置） -->
-  <g transform="translate(64, 64)">
+  <g
+     transform="matrix(1.3073811,0,0,1.3218396,62.769386,61.223696)"
+     id="g9">
     <!-- 8本の放射線 -->
-    <line x1="0" y1="-42" x2="0" y2="-28" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-    <line x1="30" y1="-30" x2="20" y2="-20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-    <line x1="42" y1="0" x2="28" y2="0" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-    <line x1="30" y1="30" x2="20" y2="20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-    <line x1="0" y1="42" x2="0" y2="28" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-    <line x1="-30" y1="30" x2="-20" y2="20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-    <line x1="-42" y1="0" x2="-28" y2="0" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
-    <line x1="-30" y1="-30" x2="-20" y2="-20" stroke="#FFF" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+    <line
+       x1="0"
+       y1="-42"
+       x2="0"
+       y2="-28"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line2" />
+    <line
+       x1="30"
+       y1="-30"
+       x2="20"
+       y2="-20"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line3" />
+    <line
+       x1="42"
+       y1="0"
+       x2="28"
+       y2="0"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line4" />
+    <line
+       x1="30"
+       y1="30"
+       x2="20"
+       y2="20"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line5" />
+    <line
+       x1="0"
+       y1="42"
+       x2="0"
+       y2="28"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line6" />
+    <line
+       x1="-30"
+       y1="30"
+       x2="-20"
+       y2="20"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line7" />
+    <line
+       x1="-42"
+       y1="0"
+       x2="-28"
+       y2="0"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line8" />
+    <line
+       x1="-30"
+       y1="-30"
+       x2="-20"
+       y2="-20"
+       stroke="#ffffff"
+       stroke-width="4"
+       stroke-linecap="round"
+       opacity="0.9"
+       id="line9" />
   </g>
-
   <!-- 虫眼鏡（レンズが中央、持ち手を長く） -->
-  <g transform="translate(64, 64)">
+  <g
+     transform="matrix(1.3073811,0,0,1.3218396,62.769386,61.223696)"
+     id="g10">
     <!-- 虫眼鏡のレンズ -->
-    <circle cx="0" cy="0" r="18" fill="none" stroke="#FFF" stroke-width="5"/>
+    <circle
+       cx="0"
+       cy="0"
+       r="18"
+       fill="none"
+       stroke="#ffffff"
+       stroke-width="5"
+       id="circle9" />
     <!-- 虫眼鏡の柄（長く） -->
-    <line x1="13" y1="13" x2="42" y2="42" stroke="#FFF" stroke-width="6" stroke-linecap="round"/>
+    <line
+       x1="13"
+       y1="13"
+       x2="42"
+       y2="42"
+       stroke="#ffffff"
+       stroke-width="6"
+       stroke-linecap="round"
+       id="line10" />
   </g>
 </svg>
