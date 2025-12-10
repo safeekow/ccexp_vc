@@ -6,12 +6,52 @@ import { getClaudeHomeDir, getCommandsDir, getClaudeMdPath, getSettingsPath } fr
 /**
  * ファイルを開くコマンド
  */
-export async function openFile(filePath: string): Promise<void> {
+export async function openFile(filePathOrItem: string | Record<string, unknown>): Promise<void> {
+  // 引数からファイルパスを取得
+  let filePath: string | undefined;
+
+  if (typeof filePathOrItem === 'string') {
+    filePath = filePathOrItem;
+  } else if (filePathOrItem && typeof filePathOrItem === 'object') {
+    // TreeItemの場合: commandInfo.path, agentInfo.path, fileInfo.path, settingsInfo.path など
+    const info = filePathOrItem.commandInfo || filePathOrItem.agentInfo ||
+                 filePathOrItem.fileInfo || filePathOrItem.settingsInfo;
+    if (info && typeof (info as Record<string, unknown>).path === 'string') {
+      filePath = (info as Record<string, unknown>).path as string;
+    } else if (typeof filePathOrItem.path === 'string') {
+      // 直接pathプロパティがある場合
+      filePath = filePathOrItem.path;
+    }
+  }
+
+  if (!filePath) {
+    console.error(`[ccexp] 無効な引数: ${JSON.stringify(filePathOrItem)}`);
+    vscode.window.showErrorMessage('ファイルパスが取得できませんでした');
+    return;
+  }
+
+  console.log(`[ccexp] ファイルを開きます: ${filePath}`);
   try {
+    // ファイルの存在確認
+    await fs.access(filePath);
     const uri = vscode.Uri.file(filePath);
     await vscode.window.showTextDocument(uri);
   } catch (error) {
-    vscode.window.showErrorMessage(`ファイルを開けませんでした: ${filePath}`);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`[ccexp] ファイルを開けませんでした: ${filePath}`, errorMessage);
+
+    // ファイルが存在しない場合
+    if (errorMessage.includes('ENOENT')) {
+      const action = await vscode.window.showErrorMessage(
+        `ファイルが見つかりません: ${filePath}`,
+        '再スキャン'
+      );
+      if (action === '再スキャン') {
+        await vscode.commands.executeCommand('ccexp.refresh');
+      }
+    } else {
+      vscode.window.showErrorMessage(`ファイルを開けませんでした: ${filePath}\n${errorMessage}`);
+    }
   }
 }
 
