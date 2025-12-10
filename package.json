@@ -91,7 +91,7 @@
       "view/item/context": [
         {
           "command": "ccexp.openFile",
-          "when": "view =~ /ccexp\\./",
+          "when": "view =~ /ccexp\\./ && viewItem != group",
           "group": "inline"
         }
       ]

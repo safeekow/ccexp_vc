@@ -1,151 +1,104 @@
-# Claude Code Explorer (VSCode拡張機能)
+# Claude Code Explorer
 
-VSCode拡張機能としてClaude Codeの設定ファイルとスラッシュコマンドを探索・管理するツールです。
+A VSCode extension for intuitively managing Claude Code configuration files, slash commands, and sub-agents.
 
-[ccexp](https://github.com/nyatinte/ccexp) のVSCode版として開発されました。
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/safeekow.ccexp-vscode)
+![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/safeekow.ccexp-vscode)
+![License](https://img.shields.io/github/license/safeekow/ccexp_vc)
 
-## 機能
+![demo](docs/ccexp_vc.gif)
 
-### 📁 CLAUDE.md ファイル管理
+## Features
 
-- プロジェクト内の`CLAUDE.md`、`CLAUDE.local.md`を自動検出
-- ユーザーホーム (`~/.claude/`) のグローバル設定も表示
-- ワンクリックでファイルを開いて編集
+- 🔍 **Auto Detection** - Automatically scans project and user configuration files
+- 📂 **Hierarchical View** - Groups files by namespace and scope
+- ✏️ **One-Click Edit** - Click a file to open it in the editor
+- ➕ **Easy Creation** - Wizard-style new file creation
+- 🔄 **Auto Refresh** - Detects file changes and refreshes automatically
 
-### ⌨️ スラッシュコマンド管理
+## Capabilities
 
-- プロジェクト・ユーザーのスラッシュコマンドを一覧表示
-- コマンドの説明と引数の有無を表示
-- 名前空間によるグループ化
-- 新規スラッシュコマンドの作成ウィザード
+### 📁 CLAUDE.md File Management
 
-### 🤖 サブエージェント管理
+Manage project memory files
 
-- プロジェクト・ユーザーのサブエージェントを一覧表示
-- エージェント名、説明、使用ツールを表示
-- ワンクリックでファイルを開いて編集
+- Detect and edit `CLAUDE.md` / `CLAUDE.local.md`
+- Support for user global settings (`~/.claude/CLAUDE.md`)
+- Visual distinction between project/user scopes
 
-### ⚙️ 設定ファイル管理
+### ⌨️ Slash Command Management
 
-- `settings.json`、`settings.local.json`の検出
-- `~/.claude.json`（グローバル設定）の管理
-- JSON形式の妥当性チェック
-- 無効なJSONファイルを警告表示
+List and create custom commands
 
-## インストール
+- Display command descriptions and argument information
+- Group by namespace (e.g., `sc:build`, `sc:test`)
+- New command creation wizard
 
-### 開発版のインストール
+### 🤖 Sub-Agent Management
 
-```bash
-# リポジトリをクローン
-git clone https://github.com/safeekow/ccexp_vc.git
-cd ccexp_vc
+Manage custom agents
 
-# 依存関係をインストール
-npm install
+- Display agent name, description, and available tools
+- Show project/user scope
 
-# ビルド
-npm run compile
+### ⚙️ Settings File Management
 
-# VSCodeで開く
-code .
-```
+Manage JSON configuration files
 
-VSCodeで開いた後、`F5`キーを押してExtension Development Hostを起動します。
+- Detect `settings.json` / `settings.local.json`
+- Support for `~/.claude.json` global settings
+- JSON validation with warning display
 
-### パッケージ化
+## Usage
 
-```bash
-# VSIXパッケージを作成
-npm run package
-```
+### Open Explorer
 
-生成された`.vsix`ファイルをVSCodeにインストールできます。
+1. Click the **Claude Code Explorer** icon in the Activity Bar
+2. Or `Cmd+Shift+P` → "Claude Code Explorer: Open Settings Explorer"
 
-## 使い方
+### Open Files
 
-### エクスプローラーを開く
+Click a file in the tree view to open it in the editor.
 
-1. アクティビティバーのClaude Code Explorerアイコンをクリック
-2. または、コマンドパレット (`Cmd+Shift+P`) から「Claude Code Explorer: 設定エクスプローラーを開く」を実行
+### Create Slash Command
 
-### ファイルを開く
+1. Click the `+` icon in the Slash Commands view title bar
+2. Select scope (Project/User)
+3. Enter command name
+4. (Optional) Enter namespace
 
-ツリービューのファイルをクリックすると、エディタで開きます。
+### Create CLAUDE.md
 
-### スラッシュコマンドを作成
+`Cmd+Shift+P` → "Claude Code Explorer: Create CLAUDE.md"
 
-1. スラッシュコマンドビューのタイトルバーにある `+` アイコンをクリック
-2. スコープ（プロジェクト/ユーザー）を選択
-3. コマンド名を入力
-4. （オプション）名前空間を入力
+## Settings
 
-### CLAUDE.mdを作成
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `ccexp.showHiddenFiles` | Show hidden files | `false` |
+| `ccexp.scanRecursively` | Recursively scan subdirectories | `true` |
+| `ccexp.autoRefresh` | Auto refresh on file changes | `true` |
 
-コマンドパレットから「Claude Code Explorer: CLAUDE.mdを作成」を実行します。
+## Supported Files
 
-### 再スキャン
+| Type | Project | User |
+|------|---------|------|
+| CLAUDE.md | `./CLAUDE.md`, `./CLAUDE.local.md` | `~/.claude/CLAUDE.md` |
+| Slash Commands | `.claude/commands/**/*.md` | `~/.claude/commands/**/*.md` |
+| Sub-Agents | `.claude/agents/**/*.md` | `~/.claude/agents/**/*.md` |
+| Settings | `.claude/settings.json` | `~/.claude/settings.json`, `~/.claude.json` |
 
-ツリービューのタイトルバーにある更新アイコンをクリックすると、ファイルを再スキャンします。
+## Requirements
 
-## 設定
+- VSCode 1.85.0 or later
+- [Claude Code](https://claude.ai/download) installed (recommended)
 
-| 設定 | 説明 | デフォルト |
-|------|------|-----------|
-| `ccexp.showHiddenFiles` | 隠しファイルを表示 | `false` |
-| `ccexp.scanRecursively` | サブディレクトリを再帰スキャン | `true` |
-| `ccexp.autoRefresh` | ファイル変更時に自動再スキャン | `true` |
+## Related Links
 
-## コマンド
+- [Claude Code Official Documentation](https://docs.anthropic.com/en/docs/claude-code)
+- [ccexp (CLI version)](https://github.com/nyatinte/ccexp) - Original CLI tool
+- [Report Issues](https://github.com/safeekow/ccexp_vc/issues)
 
-| コマンド | 説明 |
-|---------|------|
-| `ccexp.openExplorer` | エクスプローラーを開く |
-| `ccexp.refresh` | ファイルを再スキャン |
-| `ccexp.openFile` | ファイルを開く |
-| `ccexp.createSlashCommand` | スラッシュコマンドを作成 |
-| `ccexp.createClaudeMd` | CLAUDE.mdを作成 |
+## License
 
-## 対応ファイル
-
-### CLAUDE.md
-- `CLAUDE.md` - プロジェクトのメモリファイル
-- `CLAUDE.local.md` - ローカル専用メモリファイル
-- `~/.claude/CLAUDE.md` - ユーザーグローバル設定
-
-### スラッシュコマンド
-- `.claude/commands/**/*.md` - プロジェクトコマンド
-- `~/.claude/commands/**/*.md` - ユーザーコマンド
-
-### サブエージェント
-- `.claude/agents/**/*.md` - プロジェクトサブエージェント
-- `~/.claude/agents/**/*.md` - ユーザーサブエージェント
-
-### 設定
-- `.claude/settings.json` - プロジェクト設定
-- `.claude/settings.local.json` - ローカル専用設定
-- `~/.claude/settings.json` - ユーザー設定
-- `~/.claude/settings.local.json` - ユーザーローカル設定
-- `~/.claude.json` - グローバル設定（ホームディレクトリ直下）
-
-## 開発
-
-```bash
-# 開発モード（ファイル変更を監視）
-npm run watch
-
-# TypeScriptの型チェック
-npx tsc --noEmit
-
-# Lint
-npm run lint
-```
-
-## ライセンス
-
-MIT
-
-## 関連プロジェクト
-
-- [ccexp](https://github.com/nyatinte/ccexp) - オリジナルのCLIツール
-- [Claude Code](https://claude.com/claude-code) - Anthropic公式CLI
+MIT License - See [LICENSE](LICENSE.txt) for details.

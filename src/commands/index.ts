@@ -13,6 +13,12 @@ export async function openFile(filePathOrItem: string | Record<string, unknown>)
   if (typeof filePathOrItem === 'string') {
     filePath = filePathOrItem;
   } else if (filePathOrItem && typeof filePathOrItem === 'object') {
+    // グループ（フォルダ）の場合は何もしない
+    if (filePathOrItem.isGroup === true) {
+      console.log('[ccexp] グループアイテムのためスキップ');
+      return;
+    }
+
     // TreeItemの場合: commandInfo.path, agentInfo.path, fileInfo.path, settingsInfo.path など
     const info = filePathOrItem.commandInfo || filePathOrItem.agentInfo ||
                  filePathOrItem.fileInfo || filePathOrItem.settingsInfo;
