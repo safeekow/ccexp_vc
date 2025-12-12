@@ -72,6 +72,13 @@ release:
     - vsce package --no-dependencies -o "ccexp-vscode-${VERSION}.vsix"
     - mkdir -p packages
     - mv *.vsix packages/
+    # VSCode Marketplaceへパブリッシュ
+    - |
+      if [ -n "$VSCE_PAT" ]; then
+        vsce publish --no-dependencies -p "$VSCE_PAT"
+      else
+        echo "Warning: VSCE_PAT is not set. Skipping Marketplace publish."
+      fi
   artifacts:
     paths:
       - packages/*.vsix

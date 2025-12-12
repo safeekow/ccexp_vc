@@ -99,6 +99,11 @@ jobs:
       - name: Package extension
         run: vsce package --no-dependencies -o "ccexp-vscode-${{ steps.version.outputs.VERSION }}.vsix"
 
+      - name: Publish to VSCode Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: vsce publish --no-dependencies -p $VSCE_PAT
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
