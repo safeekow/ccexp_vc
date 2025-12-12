@@ -1,6 +1,10 @@
 # Claude Code Explorer
 
-A VSCode extension for intuitively managing Claude Code configuration files, slash commands, and sub-agents.
+A powerful VSCode extension for managing Claude Code (Anthropic Claude AI) configuration files, slash commands, and sub-agents. Easily explore, edit, and create CLAUDE.md files, custom slash commands, sub-agents, and settings files with an intuitive tree view interface.
+
+> **Note:** This VSCode extension provides the same functionality as [ccexp](https://github.com/nyatinte/ccexp) (the CLI tool) in a convenient extension format. If you've used the CLI version and wanted to use similar features directly in VSCode, this extension is for you!
+>
+> Special thanks to [@nyatinte](https://github.com/nyatinte) for creating the original [ccexp](https://github.com/nyatinte/ccexp) CLI tool that inspired this extension.
 
 ![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/safeekow.ccexp-vscode)
 ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/safeekow.ccexp-vscode)
@@ -10,11 +14,12 @@ A VSCode extension for intuitively managing Claude Code configuration files, sla
 
 ## Features
 
-- 🔍 **Auto Detection** - Automatically scans project and user configuration files
-- 📂 **Hierarchical View** - Groups files by namespace and scope
-- ✏️ **One-Click Edit** - Click a file to open it in the editor
-- ➕ **Easy Creation** - Wizard-style new file creation
-- 🔄 **Auto Refresh** - Detects file changes and refreshes automatically
+- 🔍 **Auto Detection** - Automatically scans project and user configuration files for Claude Code
+- 📂 **Hierarchical View** - Groups files by namespace and scope (project vs user)
+- ✏️ **One-Click Edit** - Click any file in the tree view to open it in the editor
+- ➕ **Easy Creation** - Wizard-style creation for slash commands and CLAUDE.md files
+- 🔄 **Auto Refresh** - Automatically detects file changes and refreshes the view
+- 🎯 **Multi-Scope Support** - Manage both project-level and user-level Claude Code configurations
 
 ## Capabilities
 
@@ -88,15 +93,30 @@ Click a file in the tree view to open it in the editor.
 | Sub-Agents | `.claude/agents/**/*.md` | `~/.claude/agents/**/*.md` |
 | Settings | `.claude/settings.json` | `~/.claude/settings.json`, `~/.claude.json` |
 
+## Why Use Claude Code Explorer?
+
+If you're using **Claude Code** (Anthropic's AI coding assistant), this extension makes it easy to:
+- **Discover** all your Claude Code configuration files in one place
+- **Organize** slash commands by namespace
+- **Manage** sub-agents and their configurations
+- **Edit** CLAUDE.md files without navigating complex directory structures
+- **Create** new commands and configurations with guided wizards
+
+Perfect for developers who want to maximize their productivity with Claude Code!
+
 ## Requirements
 
 - VSCode 1.85.0 or later
 - [Claude Code](https://claude.ai/download) installed (recommended)
 
+## Acknowledgments
+
+This extension was inspired by and built to provide the same functionality as the excellent [ccexp](https://github.com/nyatinte/ccexp) CLI tool created by [@nyatinte](https://github.com/nyatinte). We are grateful for the original work that made this VSCode extension possible.
+
 ## Related Links
 
 - [Claude Code Official Documentation](https://docs.anthropic.com/en/docs/claude-code)
-- [ccexp (CLI version)](https://github.com/nyatinte/ccexp) - Original CLI tool
+- [ccexp (CLI version)](https://github.com/nyatinte/ccexp) - Original CLI tool by [@nyatinte](https://github.com/nyatinte)
 - [Report Issues](https://github.com/safeekow/ccexp_vc/issues)
 
 ## License

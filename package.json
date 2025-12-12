@@ -1,21 +1,47 @@
 {
   "name": "ccexp-vscode",
   "displayName": "Claude Code Explorer",
-  "description": "VSCode拡張機能でClaude Codeの設定ファイルとスラッシュコマンドを探索・管理",
-  "version": "0.1.0",
+  "description": "Explore and manage Claude Code configuration files, slash commands, and sub-agents. Manage CLAUDE.md, custom commands, agents, and settings files with an intuitive tree view.",
+  "version": "0.1.1",
   "publisher": "safeekow",
   "icon": "images/icon.png",
   "license": "MIT",
+  "keywords": [
+    "claude",
+    "claude-code",
+    "anthropic",
+    "claude-ai",
+    "slash-commands",
+    "configuration",
+    "settings",
+    "explorer",
+    "file-manager",
+    "claude-md",
+    "sub-agents",
+    "agents",
+    "custom-commands",
+    "project-settings",
+    "claude-config"
+  ],
+  "categories": [
+    "Other",
+    "Snippets"
+  ],
+  "galleryBanner": {
+    "color": "#1a1a1a",
+    "theme": "dark"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/safeekow/ccexp_vc"
   },
+  "homepage": "https://github.com/safeekow/ccexp_vc#readme",
+  "bugs": {
+    "url": "https://github.com/safeekow/ccexp_vc/issues"
+  },
   "engines": {
     "vscode": "^1.85.0"
   },
-  "categories": [
-    "Other"
-  ],
   "activationEvents": [
     "onStartupFinished"
   ],
