@@ -1,0 +1,14 @@
+{
+  "command.openExplorer": "Claude Code Explorer: 打开配置资源管理器",
+  "command.refresh": "Claude Code Explorer: 重新扫描",
+  "command.openFile": "Claude Code Explorer: 打开文件",
+  "command.createSlashCommand": "Claude Code Explorer: 创建斜杠命令",
+  "command.createClaudeMd": "Claude Code Explorer: 创建 CLAUDE.md",
+  "view.claudeFiles": "CLAUDE.md 文件",
+  "view.slashCommands": "斜杠命令",
+  "view.subAgents": "子代理",
+  "view.settings": "设置文件",
+  "config.showHiddenFiles.description": "是否显示隐藏文件",
+  "config.scanRecursively.description": "是否递归扫描子目录",
+  "config.autoRefresh.description": "文件更改时是否自动重新扫描"
+}
