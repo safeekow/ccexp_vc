@@ -17,18 +17,18 @@ let settingsProvider: SettingsProvider;
 let subAgentsProvider: SubAgentsProvider;
 
 /**
- * 拡張機能のアクティベーション
+ * Extension activation
  */
 export function activate(context: vscode.ExtensionContext): void {
-  console.log('Claude Code Explorer が起動しました');
+  console.log(vscode.l10n.t('Claude Code Explorer started'));
 
-  // プロバイダーを作成
+  // Create providers
   claudeFilesProvider = createClaudeFilesProvider();
   slashCommandsProvider = createSlashCommandsProvider();
   settingsProvider = createSettingsProvider();
   subAgentsProvider = createSubAgentsProvider();
 
-  // ツリービューを登録
+  // Register tree views
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider('ccexp.claudeFiles', claudeFilesProvider),
     vscode.window.registerTreeDataProvider('ccexp.slashCommands', slashCommandsProvider),
@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.window.registerTreeDataProvider('ccexp.settings', settingsProvider)
   );
 
-  // コマンドを登録
+  // Register commands
   context.subscriptions.push(
     vscode.commands.registerCommand('ccexp.openExplorer', () => {
       vscode.commands.executeCommand('workbench.view.extension.ccexp-explorer');
@@ -47,7 +47,7 @@ export function activate(context: vscode.ExtensionContext): void {
       slashCommandsProvider.loadCommands();
       subAgentsProvider.loadAgents();
       settingsProvider.loadSettings();
-      vscode.window.showInformationMessage('Claude Code Explorer: 再スキャン完了');
+      vscode.window.showInformationMessage(vscode.l10n.t('Claude Code Explorer: Rescan completed'));
     }),
 
     vscode.commands.registerCommand('ccexp.openFile', (filePath: string) => {
@@ -67,7 +67,7 @@ export function activate(context: vscode.ExtensionContext): void {
     })
   );
 
-  // ファイル変更の監視
+  // Watch for file changes
   const config = vscode.workspace.getConfiguration('ccexp');
   if (config.get('autoRefresh', true)) {
     const watcher = vscode.workspace.createFileSystemWatcher(
@@ -82,7 +82,7 @@ export function activate(context: vscode.ExtensionContext): void {
     );
   }
 
-  // 設定変更の監視
+  // Watch for configuration changes
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration('ccexp')) {
@@ -91,12 +91,12 @@ export function activate(context: vscode.ExtensionContext): void {
     })
   );
 
-  // 初回スキャン
+  // Initial scan
   refreshAll();
 }
 
 /**
- * すべてのプロバイダーを更新
+ * Refresh all providers
  */
 function refreshAll(): void {
   claudeFilesProvider.loadFiles();
@@ -106,8 +106,8 @@ function refreshAll(): void {
 }
 
 /**
- * 拡張機能の非アクティベーション
+ * Extension deactivation
  */
 export function deactivate(): void {
-  console.log('Claude Code Explorer が終了しました');
+  console.log(vscode.l10n.t('Claude Code Explorer terminated'));
 }

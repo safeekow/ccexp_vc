@@ -1,0 +1,14 @@
+{
+  "command.openExplorer": "Claude Code Explorer: Abrir explorador de configuração",
+  "command.refresh": "Claude Code Explorer: Reescanear",
+  "command.openFile": "Claude Code Explorer: Abrir arquivo",
+  "command.createSlashCommand": "Claude Code Explorer: Criar comando slash",
+  "command.createClaudeMd": "Claude Code Explorer: Criar CLAUDE.md",
+  "view.claudeFiles": "Arquivos CLAUDE.md",
+  "view.slashCommands": "Comandos Slash",
+  "view.subAgents": "Sub-agentes",
+  "view.settings": "Arquivos de configuração",
+  "config.showHiddenFiles.description": "Se deve mostrar arquivos ocultos",
+  "config.scanRecursively.description": "Se deve escanear subdiretórios recursivamente",
+  "config.autoRefresh.description": "Se deve reescanear automaticamente quando os arquivos mudam"
+}

@@ -4,7 +4,7 @@ import { slashCommandScanner } from '../scanners';
 import type { SlashCommandInfo, ScanOptions } from '../types';
 
 /**
- * スラッシュコマンドのツリービュープロバイダー
+ * Tree view provider for slash commands
  */
 export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashCommandItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SlashCommandItem | undefined | null | void>();
@@ -29,7 +29,7 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
       recursive: config.get('scanRecursively', true),
     };
 
-    // ワークスペースがなくてもユーザーコマンドはスキャン可能
+    // User commands can be scanned even without a workspace
     this.commands = await slashCommandScanner.scan(this.workspacePath || '', options);
     this.loaded = true;
     this.refresh();
@@ -41,7 +41,7 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
 
   async getChildren(element?: SlashCommandItem): Promise<SlashCommandItem[]> {
     if (element) {
-      // グループの子要素を返す
+      // Return children of a group
       if (element.isGroup) {
         return element.getChildItems();
       }
@@ -52,16 +52,16 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
       await this.loadCommands();
     }
 
-    // スコープでグループ化
+    // Group by scope
     const projectCommands = this.commands.filter(c => c.scope === 'project');
     const userCommands = this.commands.filter(c => c.scope === 'user');
 
     const items: SlashCommandItem[] = [];
 
-    // プロジェクトコマンド
+    // Project commands
     if (projectCommands.length > 0) {
       items.push(new SlashCommandItem(
-        `プロジェクト (${projectCommands.length})`,
+        vscode.l10n.t('Project ({0})', projectCommands.length),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -69,10 +69,10 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
       ));
     }
 
-    // ユーザーコマンド
+    // User commands
     if (userCommands.length > 0) {
       items.push(new SlashCommandItem(
-        `ユーザー (~/.claude/commands/) (${userCommands.length})`,
+        vscode.l10n.t('User (~/.claude/commands/) ({0})', userCommands.length),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -82,7 +82,7 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
 
     if (items.length === 0) {
       return [new SlashCommandItem(
-        'スラッシュコマンドが見つかりません',
+        vscode.l10n.t('No slash commands found'),
         vscode.TreeItemCollapsibleState.None,
         undefined,
         false,
@@ -95,7 +95,7 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
 }
 
 /**
- * スラッシュコマンドのツリーアイテム
+ * Tree item for slash commands
  */
 export class SlashCommandItem extends vscode.TreeItem {
   constructor(
@@ -114,7 +114,7 @@ export class SlashCommandItem extends vscode.TreeItem {
       this.contextValue = 'slashCommand';
       this.command = {
         command: 'ccexp.openFile',
-        title: 'ファイルを開く',
+        title: vscode.l10n.t('Open file'),
         arguments: [commandInfo.path]
       };
     } else if (isGroup) {
@@ -129,9 +129,9 @@ export class SlashCommandItem extends vscode.TreeItem {
       tooltip = `/${info.namespace}:${info.commandName}`;
     }
     if (info.hasArgs) {
-      tooltip += ' [引数あり]';
+      tooltip += ` ${vscode.l10n.t('[has arguments]')}`;
     }
-    tooltip += `\n\nパス: ${info.path}`;
+    tooltip += `\n\n${vscode.l10n.t('Path: {0}', info.path)}`;
     if (info.description) {
       tooltip += `\n\n${info.description}`;
     }
@@ -139,7 +139,7 @@ export class SlashCommandItem extends vscode.TreeItem {
   }
 
   private buildDescription(info: SlashCommandInfo): string {
-    // パスの親ディレクトリ名を表示（例: ~/.claude/commands/sc）
+    // Display parent directory name (e.g., ~/.claude/commands/sc)
     const dirPath = path.dirname(info.path);
     const home = process.env.HOME || '';
     let displayPath = dirPath;
@@ -158,9 +158,9 @@ export class SlashCommandItem extends vscode.TreeItem {
     return new vscode.ThemeIcon(info.hasArgs ? 'symbol-function' : 'symbol-event');
   }
 
-  // グループの子要素を返す
+  // Return children of the group
   getChildItems(): SlashCommandItem[] {
-    // 名前空間でさらにグループ化
+    // Further group by namespace
     const byNamespace = new Map<string, SlashCommandInfo[]>();
 
     for (const cmd of this.children) {
@@ -173,7 +173,7 @@ export class SlashCommandItem extends vscode.TreeItem {
 
     const items: SlashCommandItem[] = [];
 
-    // 名前空間なしのコマンド
+    // Commands without namespace
     const rootCommands = byNamespace.get('') || [];
     for (const cmd of rootCommands) {
       items.push(new SlashCommandItem(
@@ -183,7 +183,7 @@ export class SlashCommandItem extends vscode.TreeItem {
       ));
     }
 
-    // 名前空間ありのコマンド
+    // Commands with namespace
     for (const [ns, cmds] of byNamespace.entries()) {
       if (ns === '') continue;
 
@@ -200,7 +200,7 @@ export class SlashCommandItem extends vscode.TreeItem {
   }
 }
 
-// ファクトリ関数
+// Factory function
 export function createSlashCommandsProvider(): SlashCommandsProvider {
   return new SlashCommandsProvider();
 }

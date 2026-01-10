@@ -4,7 +4,7 @@ import { subAgentScanner } from '../scanners';
 import type { SubAgentInfo, ScanOptions } from '../types';
 
 /**
- * サブエージェントのツリービュープロバイダー
+ * Tree view provider for sub-agents
  */
 export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SubAgentItem | undefined | null | void>();
@@ -39,7 +39,7 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
   }
 
   async getChildren(element?: SubAgentItem): Promise<SubAgentItem[]> {
-    // グループの子要素を返す
+    // Return children of a group
     if (element && element.isGroup) {
       return element.getChildItems();
     }
@@ -52,16 +52,16 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
       await this.loadAgents();
     }
 
-    // スコープでグループ化
+    // Group by scope
     const projectAgents = this.agents.filter(a => a.scope === 'project');
     const userAgents = this.agents.filter(a => a.scope === 'user');
 
     const items: SubAgentItem[] = [];
 
-    // プロジェクトエージェント
+    // Project agents
     if (projectAgents.length > 0) {
       items.push(new SubAgentItem(
-        'プロジェクト',
+        vscode.l10n.t('Project'),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -69,10 +69,10 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
       ));
     }
 
-    // ユーザーエージェント
+    // User agents
     if (userAgents.length > 0) {
       items.push(new SubAgentItem(
-        'ユーザー (~/.claude)',
+        vscode.l10n.t('User (~/.claude)'),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -82,7 +82,7 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
 
     if (items.length === 0) {
       return [new SubAgentItem(
-        'サブエージェントが見つかりません',
+        vscode.l10n.t('No sub-agents found'),
         vscode.TreeItemCollapsibleState.None,
         undefined,
         false,
@@ -95,7 +95,7 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
 }
 
 /**
- * サブエージェントのツリーアイテム
+ * Tree item for sub-agents
  */
 export class SubAgentItem extends vscode.TreeItem {
   constructor(
@@ -114,7 +114,7 @@ export class SubAgentItem extends vscode.TreeItem {
       this.contextValue = 'subAgent';
       this.command = {
         command: 'ccexp.openFile',
-        title: 'ファイルを開く',
+        title: vscode.l10n.t('Open file'),
         arguments: [agentInfo.path]
       };
     } else if (isGroup) {
@@ -124,18 +124,18 @@ export class SubAgentItem extends vscode.TreeItem {
   }
 
   private buildTooltip(info: SubAgentInfo): string {
-    let tooltip = `エージェント: ${info.agentName}`;
-    tooltip += `\nパス: ${info.path}`;
+    let tooltip = vscode.l10n.t('Agent: {0}', info.agentName);
+    tooltip += `\n${vscode.l10n.t('Path: {0}', info.path)}`;
     if (info.description) {
       tooltip += `\n\n${info.description}`;
     }
     if (info.tools && info.tools.length > 0) {
-      tooltip += `\n\nツール: ${info.tools.join(', ')}`;
+      tooltip += `\n\n${vscode.l10n.t('Tools: {0}', info.tools.join(', '))}`;
     }
     return tooltip;
   }
 
-  // グループの子要素を返す
+  // Return children of the group
   getChildItems(): SubAgentItem[] {
     return this.children.map(agent => new SubAgentItem(
       agent.agentName,
@@ -145,7 +145,7 @@ export class SubAgentItem extends vscode.TreeItem {
   }
 }
 
-// ファクトリ関数
+// Factory function
 export function createSubAgentsProvider(): SubAgentsProvider {
   return new SubAgentsProvider();
 }

@@ -1,0 +1,14 @@
+{
+  "command.openExplorer": "Claude Code Explorer: 設定エクスプローラーを開く",
+  "command.refresh": "Claude Code Explorer: 再スキャン",
+  "command.openFile": "Claude Code Explorer: ファイルを開く",
+  "command.createSlashCommand": "Claude Code Explorer: スラッシュコマンドを作成",
+  "command.createClaudeMd": "Claude Code Explorer: CLAUDE.mdを作成",
+  "view.claudeFiles": "CLAUDE.md ファイル",
+  "view.slashCommands": "スラッシュコマンド",
+  "view.subAgents": "サブエージェント",
+  "view.settings": "設定ファイル",
+  "config.showHiddenFiles.description": "隠しファイルを表示するかどうか",
+  "config.scanRecursively.description": "サブディレクトリを再帰的にスキャンするかどうか",
+  "config.autoRefresh.description": "ファイル変更時に自動的に再スキャンするかどうか"
+}

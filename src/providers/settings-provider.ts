@@ -4,7 +4,7 @@ import { settingsScanner } from '../scanners';
 import type { SettingsInfo, ScanOptions } from '../types';
 
 /**
- * 設定ファイルのツリービュープロバイダー
+ * Tree view provider for settings files
  */
 export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<SettingsItem | undefined | null | void>();
@@ -29,7 +29,7 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
       recursive: config.get('scanRecursively', true),
     };
 
-    // ワークスペースがなくてもユーザー設定はスキャン可能
+    // User settings can be scanned even without a workspace
     this.settings = await settingsScanner.scan(this.workspacePath || '', options);
     this.loaded = true;
     this.refresh();
@@ -41,7 +41,7 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
 
   async getChildren(element?: SettingsItem): Promise<SettingsItem[]> {
     if (element) {
-      // グループの子要素を返す
+      // Return children of a group
       if (element.isGroup) {
         return element.getChildItems();
       }
@@ -52,16 +52,16 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
       await this.loadSettings();
     }
 
-    // スコープでグループ化
+    // Group by scope
     const projectSettings = this.settings.filter(s => s.scope === 'project');
     const userSettings = this.settings.filter(s => s.scope === 'user');
 
     const items: SettingsItem[] = [];
 
-    // プロジェクト設定
+    // Project settings
     if (projectSettings.length > 0) {
       items.push(new SettingsItem(
-        'プロジェクト',
+        vscode.l10n.t('Project'),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -69,10 +69,10 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
       ));
     }
 
-    // ユーザー設定
+    // User settings
     if (userSettings.length > 0) {
       items.push(new SettingsItem(
-        'ユーザー (~/.claude)',
+        vscode.l10n.t('User (~/.claude)'),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -82,7 +82,7 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
 
     if (items.length === 0) {
       return [new SettingsItem(
-        '設定ファイルが見つかりません',
+        vscode.l10n.t('No settings files found'),
         vscode.TreeItemCollapsibleState.None,
         undefined,
         false,
@@ -95,7 +95,7 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
 }
 
 /**
- * 設定ファイルのツリーアイテム
+ * Tree item for settings files
  */
 export class SettingsItem extends vscode.TreeItem {
   constructor(
@@ -114,7 +114,7 @@ export class SettingsItem extends vscode.TreeItem {
       this.contextValue = 'settingsFile';
       this.command = {
         command: 'ccexp.openFile',
-        title: 'ファイルを開く',
+        title: vscode.l10n.t('Open file'),
         arguments: [settingsInfo.path]
       };
     } else if (isGroup) {
@@ -126,7 +126,7 @@ export class SettingsItem extends vscode.TreeItem {
   private buildTooltip(info: SettingsInfo): string {
     let tooltip = info.path;
     if (!info.isValid) {
-      tooltip += '\n\n⚠️ JSONの形式が無効です';
+      tooltip += `\n\n⚠️ ${vscode.l10n.t('JSON format is invalid')}`;
     }
     return tooltip;
   }
@@ -137,7 +137,7 @@ export class SettingsItem extends vscode.TreeItem {
       parts.push('local');
     }
     if (!info.isValid) {
-      parts.push('⚠️ 無効');
+      parts.push(`⚠️ ${vscode.l10n.t('invalid')}`);
     }
     return parts.join(' | ');
   }
@@ -150,7 +150,7 @@ export class SettingsItem extends vscode.TreeItem {
     return new vscode.ThemeIcon(isLocal ? 'file-symlink-file' : 'settings-gear');
   }
 
-  // グループの子要素を返す
+  // Return children of the group
   getChildItems(): SettingsItem[] {
     return this.children.map(setting => new SettingsItem(
       path.basename(setting.path),
@@ -160,7 +160,7 @@ export class SettingsItem extends vscode.TreeItem {
   }
 }
 
-// ファクトリ関数
+// Factory function
 export function createSettingsProvider(): SettingsProvider {
   return new SettingsProvider();
 }
