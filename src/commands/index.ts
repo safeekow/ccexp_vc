@@ -4,90 +4,91 @@ import * as fs from 'fs/promises';
 import { getClaudeHomeDir, getCommandsDir, getClaudeMdPath, getSettingsPath } from '../utils/paths';
 
 /**
- * ファイルを開くコマンド
+ * Open file command
  */
 export async function openFile(filePathOrItem: string | Record<string, unknown>): Promise<void> {
-  // 引数からファイルパスを取得
+  // Get file path from argument
   let filePath: string | undefined;
 
   if (typeof filePathOrItem === 'string') {
     filePath = filePathOrItem;
   } else if (filePathOrItem && typeof filePathOrItem === 'object') {
-    // グループ（フォルダ）の場合は何もしない
+    // Skip if it's a group (folder)
     if (filePathOrItem.isGroup === true) {
-      console.log('[ccexp] グループアイテムのためスキップ');
+      console.log('[ccexp] Skipping group item');
       return;
     }
 
-    // TreeItemの場合: commandInfo.path, agentInfo.path, fileInfo.path, settingsInfo.path など
+    // TreeItem case: commandInfo.path, agentInfo.path, fileInfo.path, settingsInfo.path etc.
     const info = filePathOrItem.commandInfo || filePathOrItem.agentInfo ||
                  filePathOrItem.fileInfo || filePathOrItem.settingsInfo;
     if (info && typeof (info as Record<string, unknown>).path === 'string') {
       filePath = (info as Record<string, unknown>).path as string;
     } else if (typeof filePathOrItem.path === 'string') {
-      // 直接pathプロパティがある場合
+      // If path property exists directly
       filePath = filePathOrItem.path;
     }
   }
 
   if (!filePath) {
-    console.error(`[ccexp] 無効な引数: ${JSON.stringify(filePathOrItem)}`);
-    vscode.window.showErrorMessage('ファイルパスが取得できませんでした');
+    console.error(`[ccexp] Invalid argument: ${JSON.stringify(filePathOrItem)}`);
+    vscode.window.showErrorMessage(vscode.l10n.t('Could not retrieve file path'));
     return;
   }
 
-  console.log(`[ccexp] ファイルを開きます: ${filePath}`);
+  console.log(`[ccexp] Opening file: ${filePath}`);
   try {
-    // ファイルの存在確認
+    // Check if file exists
     await fs.access(filePath);
     const uri = vscode.Uri.file(filePath);
     await vscode.window.showTextDocument(uri);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(`[ccexp] ファイルを開けませんでした: ${filePath}`, errorMessage);
+    console.error(`[ccexp] Could not open file: ${filePath}`, errorMessage);
 
-    // ファイルが存在しない場合
+    // File not found
     if (errorMessage.includes('ENOENT')) {
+      const rescanLabel = vscode.l10n.t('Rescan');
       const action = await vscode.window.showErrorMessage(
-        `ファイルが見つかりません: ${filePath}`,
-        '再スキャン'
+        vscode.l10n.t('File not found: {0}', filePath),
+        rescanLabel
       );
-      if (action === '再スキャン') {
+      if (action === rescanLabel) {
         await vscode.commands.executeCommand('ccexp.refresh');
       }
     } else {
-      vscode.window.showErrorMessage(`ファイルを開けませんでした: ${filePath}\n${errorMessage}`);
+      vscode.window.showErrorMessage(vscode.l10n.t('Could not open file: {0}', `${filePath}\n${errorMessage}`));
     }
   }
 }
 
 /**
- * スラッシュコマンドを作成
+ * Create slash command
  */
 export async function createSlashCommand(): Promise<void> {
-  // スコープを選択
+  // Select scope
   const scope = await vscode.window.showQuickPick(
     [
-      { label: 'プロジェクト', value: 'project', description: '.claude/commands/ に作成' },
-      { label: 'ユーザー', value: 'user', description: '~/.claude/commands/ に作成' }
+      { label: vscode.l10n.t('Project'), value: 'project', description: vscode.l10n.t('Create in .claude/commands/') },
+      { label: vscode.l10n.t('User'), value: 'user', description: vscode.l10n.t('Create in ~/.claude/commands/') }
     ],
-    { placeHolder: 'コマンドのスコープを選択' }
+    { placeHolder: vscode.l10n.t('Select command scope') }
   );
 
   if (!scope) {
     return;
   }
 
-  // コマンド名を入力
+  // Enter command name
   const commandName = await vscode.window.showInputBox({
-    prompt: 'コマンド名を入力（例: my-command）',
-    placeHolder: 'コマンド名',
+    prompt: vscode.l10n.t('Enter command name (e.g., my-command)'),
+    placeHolder: vscode.l10n.t('Command name'),
     validateInput: (value) => {
       if (!value) {
-        return 'コマンド名を入力してください';
+        return vscode.l10n.t('Please enter a command name');
       }
       if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(value)) {
-        return 'コマンド名は英字で始まり、英数字・ハイフン・アンダースコアのみ使用可能です';
+        return vscode.l10n.t('Command name must start with a letter and can only contain letters, numbers, hyphens, and underscores');
       }
       return null;
     }
@@ -97,107 +98,107 @@ export async function createSlashCommand(): Promise<void> {
     return;
   }
 
-  // 名前空間を入力（オプション）
+  // Enter namespace (optional)
   const namespace = await vscode.window.showInputBox({
-    prompt: '名前空間を入力（オプション、例: utils）',
-    placeHolder: '空白でルートに作成'
+    prompt: vscode.l10n.t('Enter namespace (optional, e.g., utils)'),
+    placeHolder: vscode.l10n.t('Leave empty to create at root')
   });
 
-  // ベースディレクトリを決定
+  // Determine base directory
   let baseDir: string;
   if (scope.value === 'user') {
     baseDir = path.join(getClaudeHomeDir(), 'commands');
   } else {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     if (!workspaceFolder) {
-      vscode.window.showErrorMessage('ワークスペースが開かれていません');
+      vscode.window.showErrorMessage(vscode.l10n.t('No workspace is open'));
       return;
     }
     baseDir = getCommandsDir(workspaceFolder.uri.fsPath);
   }
 
-  // ファイルパスを構築
+  // Build file path
   const targetDir = namespace ? path.join(baseDir, namespace) : baseDir;
   const filePath = path.join(targetDir, `${commandName}.md`);
 
-  // ディレクトリを作成
+  // Create directory
   try {
     await fs.mkdir(targetDir, { recursive: true });
   } catch (error) {
-    vscode.window.showErrorMessage(`ディレクトリを作成できませんでした: ${targetDir}`);
+    vscode.window.showErrorMessage(vscode.l10n.t('Could not create directory: {0}', targetDir));
     return;
   }
 
-  // テンプレートを作成
+  // Create template
   const fullCommandName = namespace ? `${namespace}:${commandName}` : commandName;
   const template = `# ${fullCommandName}
 
-このコマンドの説明を記述してください。
+${vscode.l10n.t('template.slashCommand.description')}
 
-## 使用方法
+## ${vscode.l10n.t('template.slashCommand.usage')}
 
 \`/${fullCommandName}\`
 
-## 処理内容
+## ${vscode.l10n.t('template.slashCommand.content')}
 
-コマンドが実行されたときの処理内容を記述してください。
+${vscode.l10n.t('template.slashCommand.contentDescription')}
 `;
 
-  // ファイルを作成
+  // Create file
   try {
     await fs.writeFile(filePath, template, 'utf-8');
     const uri = vscode.Uri.file(filePath);
     await vscode.window.showTextDocument(uri);
-    vscode.window.showInformationMessage(`スラッシュコマンド /${fullCommandName} を作成しました`);
+    vscode.window.showInformationMessage(vscode.l10n.t('Slash command /{0} created', fullCommandName));
   } catch (error) {
-    vscode.window.showErrorMessage(`ファイルを作成できませんでした: ${filePath}`);
+    vscode.window.showErrorMessage(vscode.l10n.t('Could not create file: {0}', filePath));
   }
 }
 
 /**
- * CLAUDE.mdを作成
+ * Create CLAUDE.md
  */
 export async function createClaudeMd(): Promise<void> {
-  // スコープを選択
+  // Select scope
   const scope = await vscode.window.showQuickPick(
     [
-      { label: 'プロジェクト', value: 'project', description: 'プロジェクトルートに作成' },
-      { label: 'ユーザー', value: 'user', description: '~/.claude/ に作成' }
+      { label: vscode.l10n.t('Project'), value: 'project', description: vscode.l10n.t('Create at project root') },
+      { label: vscode.l10n.t('User'), value: 'user', description: vscode.l10n.t('Create in ~/.claude/') }
     ],
-    { placeHolder: 'CLAUDE.mdのスコープを選択' }
+    { placeHolder: vscode.l10n.t('Select CLAUDE.md scope') }
   );
 
   if (!scope) {
     return;
   }
 
-  // ローカル版かどうかを選択
+  // Select local version or not
   const isLocal = await vscode.window.showQuickPick(
     [
-      { label: 'CLAUDE.md', value: false, description: 'Git管理対象' },
-      { label: 'CLAUDE.local.md', value: true, description: 'ローカルのみ（.gitignore推奨）' }
+      { label: 'CLAUDE.md', value: false, description: vscode.l10n.t('Git tracked') },
+      { label: 'CLAUDE.local.md', value: true, description: vscode.l10n.t('Local only (.gitignore recommended)') }
     ],
-    { placeHolder: 'ファイルタイプを選択' }
+    { placeHolder: vscode.l10n.t('Select file type') }
   );
 
   if (isLocal === undefined) {
     return;
   }
 
-  // ベースディレクトリを決定
+  // Determine base directory
   let baseDir: string;
   if (scope.value === 'user') {
     baseDir = getClaudeHomeDir();
-    // ~/.claude/ ディレクトリを作成
+    // Create ~/.claude/ directory
     try {
       await fs.mkdir(baseDir, { recursive: true });
     } catch {
-      // 既存の場合は無視
+      // Ignore if already exists
     }
   } else {
     const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
     if (!workspaceFolder) {
-      vscode.window.showErrorMessage('ワークスペースが開かれていません');
+      vscode.window.showErrorMessage(vscode.l10n.t('No workspace is open'));
       return;
     }
     baseDir = workspaceFolder.uri.fsPath;
@@ -206,53 +207,55 @@ export async function createClaudeMd(): Promise<void> {
   const filename = isLocal.value ? 'CLAUDE.local.md' : 'CLAUDE.md';
   const filePath = path.join(baseDir, filename);
 
-  // ファイルが存在するか確認
+  // Check if file exists
   try {
     await fs.access(filePath);
+    const yesLabel = vscode.l10n.t('Yes');
+    const noLabel = vscode.l10n.t('No');
     const overwrite = await vscode.window.showQuickPick(
       [
-        { label: 'はい', value: true },
-        { label: 'いいえ', value: false }
+        { label: yesLabel, value: true },
+        { label: noLabel, value: false }
       ],
-      { placeHolder: `${filename} は既に存在します。上書きしますか？` }
+      { placeHolder: vscode.l10n.t('{0} already exists. Overwrite?', filename) }
     );
     if (!overwrite?.value) {
-      // 既存ファイルを開く
+      // Open existing file
       const uri = vscode.Uri.file(filePath);
       await vscode.window.showTextDocument(uri);
       return;
     }
   } catch {
-    // ファイルが存在しない場合は続行
+    // Continue if file doesn't exist
   }
 
-  // テンプレートを作成
-  const template = `# プロジェクト設定
+  // Create template
+  const template = `# ${vscode.l10n.t('template.claudeMd.title')}
 
-このファイルには、Claude Codeへの指示やプロジェクト固有の設定を記述します。
+${vscode.l10n.t('template.claudeMd.description')}
 
-## プロジェクト概要
+## ${vscode.l10n.t('template.claudeMd.overview')}
 
-プロジェクトの概要を記述してください。
+${vscode.l10n.t('template.claudeMd.overviewPlaceholder')}
 
-## コーディング規約
+## ${vscode.l10n.t('template.claudeMd.codingStandards')}
 
-- 言語:
-- フレームワーク:
-- スタイルガイド:
+- ${vscode.l10n.t('template.claudeMd.language')}
+- ${vscode.l10n.t('template.claudeMd.framework')}
+- ${vscode.l10n.t('template.claudeMd.styleGuide')}
 
-## 重要な注意事項
+## ${vscode.l10n.t('template.claudeMd.notes')}
 
-プロジェクト固有の注意事項を記述してください。
+${vscode.l10n.t('template.claudeMd.notesPlaceholder')}
 `;
 
-  // ファイルを作成
+  // Create file
   try {
     await fs.writeFile(filePath, template, 'utf-8');
     const uri = vscode.Uri.file(filePath);
     await vscode.window.showTextDocument(uri);
-    vscode.window.showInformationMessage(`${filename} を作成しました`);
+    vscode.window.showInformationMessage(vscode.l10n.t('{0} created', filename));
   } catch (error) {
-    vscode.window.showErrorMessage(`ファイルを作成できませんでした: ${filePath}`);
+    vscode.window.showErrorMessage(vscode.l10n.t('Could not create file: {0}', filePath));
   }
 }
