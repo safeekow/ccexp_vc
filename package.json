@@ -46,30 +46,31 @@
     "onStartupFinished"
   ],
   "main": "./dist/extension.js",
+  "l10n": "./l10n",
   "contributes": {
     "commands": [
       {
         "command": "ccexp.openExplorer",
-        "title": "Claude Code Explorer: 設定エクスプローラーを開く",
+        "title": "%command.openExplorer%",
         "icon": "$(file-code)"
       },
       {
         "command": "ccexp.refresh",
-        "title": "Claude Code Explorer: 再スキャン",
+        "title": "%command.refresh%",
         "icon": "$(refresh)"
       },
       {
         "command": "ccexp.openFile",
-        "title": "Claude Code Explorer: ファイルを開く"
+        "title": "%command.openFile%"
       },
       {
         "command": "ccexp.createSlashCommand",
-        "title": "Claude Code Explorer: スラッシュコマンドを作成",
+        "title": "%command.createSlashCommand%",
         "icon": "$(add)"
       },
       {
         "command": "ccexp.createClaudeMd",
-        "title": "Claude Code Explorer: CLAUDE.mdを作成"
+        "title": "%command.createClaudeMd%"
       }
     ],
     "viewsContainers": {
@@ -85,19 +86,19 @@
       "ccexp-explorer": [
         {
           "id": "ccexp.claudeFiles",
-          "name": "CLAUDE.md ファイル"
+          "name": "%view.claudeFiles%"
         },
         {
           "id": "ccexp.slashCommands",
-          "name": "スラッシュコマンド"
+          "name": "%view.slashCommands%"
         },
         {
           "id": "ccexp.subAgents",
-          "name": "サブエージェント"
+          "name": "%view.subAgents%"
         },
         {
           "id": "ccexp.settings",
-          "name": "設定ファイル"
+          "name": "%view.settings%"
         }
       ]
     },
@@ -128,17 +129,17 @@
         "ccexp.showHiddenFiles": {
           "type": "boolean",
           "default": false,
-          "description": "隠しファイルを表示するかどうか"
+          "description": "%config.showHiddenFiles.description%"
         },
         "ccexp.scanRecursively": {
           "type": "boolean",
           "default": true,
-          "description": "サブディレクトリを再帰的にスキャンするかどうか"
+          "description": "%config.scanRecursively.description%"
         },
         "ccexp.autoRefresh": {
           "type": "boolean",
           "default": true,
-          "description": "ファイル変更時に自動的に再スキャンするかどうか"
+          "description": "%config.autoRefresh.description%"
         }
       }
     }

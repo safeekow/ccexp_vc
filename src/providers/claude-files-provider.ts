@@ -4,7 +4,7 @@ import { claudeMdScanner } from '../scanners';
 import type { ClaudeFileInfo, ScanOptions } from '../types';
 
 /**
- * CLAUDE.mdファイルのツリービュープロバイダー
+ * Tree view provider for CLAUDE.md files
  */
 export class ClaudeFilesProvider implements vscode.TreeDataProvider<ClaudeFileItem> {
   private _onDidChangeTreeData = new vscode.EventEmitter<ClaudeFileItem | undefined | null | void>();
@@ -29,7 +29,7 @@ export class ClaudeFilesProvider implements vscode.TreeDataProvider<ClaudeFileIt
       recursive: config.get('scanRecursively', true),
     };
 
-    // ワークスペースがなくてもユーザー設定はスキャン可能
+    // User settings can be scanned even without a workspace
     this.files = await claudeMdScanner.scan(this.workspacePath || '', options);
     this.loaded = true;
     this.refresh();
@@ -40,7 +40,7 @@ export class ClaudeFilesProvider implements vscode.TreeDataProvider<ClaudeFileIt
   }
 
   async getChildren(element?: ClaudeFileItem): Promise<ClaudeFileItem[]> {
-    // グループの子要素を返す
+    // Return children of a group
     if (element && element.isGroup) {
       return element.getChildItems();
     }
@@ -53,16 +53,16 @@ export class ClaudeFilesProvider implements vscode.TreeDataProvider<ClaudeFileIt
       await this.loadFiles();
     }
 
-    // スコープでグループ化
+    // Group by scope
     const projectFiles = this.files.filter(f => f.scope === 'project');
     const userFiles = this.files.filter(f => f.scope === 'user');
 
     const items: ClaudeFileItem[] = [];
 
-    // プロジェクトファイル
+    // Project files
     if (projectFiles.length > 0) {
       items.push(new ClaudeFileItem(
-        'プロジェクト',
+        vscode.l10n.t('Project'),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -70,10 +70,10 @@ export class ClaudeFilesProvider implements vscode.TreeDataProvider<ClaudeFileIt
       ));
     }
 
-    // ユーザーファイル
+    // User files
     if (userFiles.length > 0) {
       items.push(new ClaudeFileItem(
-        'ユーザー (~/.claude)',
+        vscode.l10n.t('User (~/.claude)'),
         vscode.TreeItemCollapsibleState.Expanded,
         undefined,
         true,
@@ -83,7 +83,7 @@ export class ClaudeFilesProvider implements vscode.TreeDataProvider<ClaudeFileIt
 
     if (items.length === 0) {
       return [new ClaudeFileItem(
-        'CLAUDE.mdファイルが見つかりません',
+        vscode.l10n.t('No CLAUDE.md files found'),
         vscode.TreeItemCollapsibleState.None,
         undefined,
         false,
@@ -96,7 +96,7 @@ export class ClaudeFilesProvider implements vscode.TreeDataProvider<ClaudeFileIt
 }
 
 /**
- * CLAUDE.mdファイルのツリーアイテム
+ * Tree item for CLAUDE.md files
  */
 export class ClaudeFileItem extends vscode.TreeItem {
   constructor(
@@ -115,7 +115,7 @@ export class ClaudeFileItem extends vscode.TreeItem {
       this.contextValue = 'claudeFile';
       this.command = {
         command: 'ccexp.openFile',
-        title: 'ファイルを開く',
+        title: vscode.l10n.t('Open file'),
         arguments: [fileInfo.path]
       };
     } else if (isGroup) {
@@ -134,7 +134,7 @@ export class ClaudeFileItem extends vscode.TreeItem {
     return new vscode.ThemeIcon(isLocal ? 'file-symlink-file' : 'file-text');
   }
 
-  // グループの子要素を返す
+  // Return children of the group
   getChildItems(): ClaudeFileItem[] {
     return this.children.map(file => new ClaudeFileItem(
       path.basename(file.path),
@@ -144,7 +144,7 @@ export class ClaudeFileItem extends vscode.TreeItem {
   }
 }
 
-// ファクトリ関数
+// Factory function
 export function createClaudeFilesProvider(): ClaudeFilesProvider {
   return new ClaudeFilesProvider();
 }
