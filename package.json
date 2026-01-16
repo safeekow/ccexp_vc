@@ -2,7 +2,7 @@
   "name": "ccexp-vscode",
   "displayName": "Claude Code Explorer",
   "description": "Explore and manage Claude Code configuration files, slash commands, and sub-agents. Manage CLAUDE.md, custom commands, agents, and settings files with an intuitive tree view.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "safeekow",
   "icon": "images/icon.png",
   "license": "MIT",
