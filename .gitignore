@@ -18,9 +18,8 @@ Thumbs.db
 
 # IDE
 .idea/
-.vscode/settings.json
-.vscode/tasks.json
-.vscode/launch.json
+.vscode/
+.cursor/
 
 # Test coverage
 coverage/
