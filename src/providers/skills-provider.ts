@@ -1,17 +1,17 @@
 import * as vscode from 'vscode';
-import { subAgentScanner } from '../scanners';
-import type { SubAgentInfo, ScanOptions } from '../types';
+import { skillScanner } from '../scanners';
+import type { SkillInfo, ScanOptions } from '../types';
 import { getHomeDir } from '../utils/paths';
 import { buildPathTree, type PathTreeNode } from '../utils/tree';
 
 /**
- * Tree view provider for sub-agents
+ * Tree view provider for skills
  */
-export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> {
-  private _onDidChangeTreeData = new vscode.EventEmitter<SubAgentItem | undefined | null | void>();
+export class SkillsProvider implements vscode.TreeDataProvider<SkillItem> {
+  private _onDidChangeTreeData = new vscode.EventEmitter<SkillItem | undefined | null | void>();
   readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-  private agents: SubAgentInfo[] = [];
+  private skills: SkillInfo[] = [];
   private workspacePath: string | undefined;
   private loaded = false;
 
@@ -23,23 +23,23 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
     this._onDidChangeTreeData.fire();
   }
 
-  async loadAgents(): Promise<void> {
+  async loadSkills(): Promise<void> {
     const config = vscode.workspace.getConfiguration('ccexp');
     const options: ScanOptions = {
       includeHidden: config.get('showHiddenFiles', false),
       recursive: config.get('scanRecursively', true),
     };
 
-    this.agents = await subAgentScanner.scan(this.workspacePath || '', options);
+    this.skills = await skillScanner.scan(this.workspacePath || '', options);
     this.loaded = true;
     this.refresh();
   }
 
-  getTreeItem(element: SubAgentItem): vscode.TreeItem {
+  getTreeItem(element: SkillItem): vscode.TreeItem {
     return element;
   }
 
-  async getChildren(element?: SubAgentItem): Promise<SubAgentItem[]> {
+  async getChildren(element?: SkillItem): Promise<SkillItem[]> {
     if (element && element.isGroup) {
       return element.getChildItems();
     }
@@ -49,47 +49,47 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
     }
 
     if (!this.loaded) {
-      await this.loadAgents();
+      await this.loadSkills();
     }
 
-    const projectAgents = this.agents.filter(a => a.scope === 'project');
-    const userAgents = this.agents.filter(a => a.scope === 'user');
+    const projectSkills = this.skills.filter(skill => skill.scope === 'project');
+    const userSkills = this.skills.filter(skill => skill.scope === 'user');
     const viewMode = vscode.workspace.getConfiguration('ccexp').get<string>('viewMode', 'flat');
 
-    const items: SubAgentItem[] = [];
+    const items: SkillItem[] = [];
 
-    if (projectAgents.length > 0) {
+    if (projectSkills.length > 0) {
       items.push(
         viewMode === 'tree'
-          ? this.createTreeRootItem(vscode.l10n.t('Project'), projectAgents, this.workspacePath || '', 'project')
-          : new SubAgentItem(
+          ? this.createTreeRootItem(vscode.l10n.t('Project'), projectSkills, this.workspacePath || '', 'project')
+          : new SkillItem(
               vscode.l10n.t('Project'),
               vscode.TreeItemCollapsibleState.Expanded,
               undefined,
               true,
-              projectAgents.map(agent => new SubAgentItem(
-                agent.agentName,
+              projectSkills.map(skill => new SkillItem(
+                skill.skillName,
                 vscode.TreeItemCollapsibleState.None,
-                agent
+                skill
               )),
               'project'
             )
       );
     }
 
-    if (userAgents.length > 0) {
+    if (userSkills.length > 0) {
       items.push(
         viewMode === 'tree'
-          ? this.createTreeRootItem(vscode.l10n.t('User (~/.claude)'), userAgents, getHomeDir(), 'user')
-          : new SubAgentItem(
+          ? this.createTreeRootItem(vscode.l10n.t('User (~/.claude)'), userSkills, getHomeDir(), 'user')
+          : new SkillItem(
               vscode.l10n.t('User (~/.claude)'),
               vscode.TreeItemCollapsibleState.Expanded,
               undefined,
               true,
-              userAgents.map(agent => new SubAgentItem(
-                agent.agentName,
+              userSkills.map(skill => new SkillItem(
+                skill.skillName,
                 vscode.TreeItemCollapsibleState.None,
-                agent
+                skill
               )),
               'user'
             )
@@ -97,8 +97,8 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
     }
 
     if (items.length === 0) {
-      return [new SubAgentItem(
-        vscode.l10n.t('No sub-agents found'),
+      return [new SkillItem(
+        vscode.l10n.t('No skills found'),
         vscode.TreeItemCollapsibleState.None,
         undefined,
         false,
@@ -111,31 +111,31 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
 
   private createTreeRootItem(
     label: string,
-    agents: SubAgentInfo[],
+    skills: SkillInfo[],
     basePath: string,
     rootKind: 'project' | 'user'
-  ): SubAgentItem {
-    return new SubAgentItem(
+  ): SkillItem {
+    return new SkillItem(
       label,
       vscode.TreeItemCollapsibleState.Expanded,
       undefined,
       true,
-      this.buildTreeItems(buildPathTree(agents, basePath)),
+      this.buildTreeItems(buildPathTree(skills, basePath)),
       rootKind
     );
   }
 
-  private buildTreeItems(nodes: PathTreeNode<SubAgentInfo>[]): SubAgentItem[] {
+  private buildTreeItems(nodes: PathTreeNode<SkillInfo>[]): SkillItem[] {
     return nodes.map((node) => {
       if (node.item) {
-        return new SubAgentItem(
+        return new SkillItem(
           node.label,
           vscode.TreeItemCollapsibleState.None,
           node.item
         );
       }
 
-      return new SubAgentItem(
+      return new SkillItem(
         node.label,
         vscode.TreeItemCollapsibleState.Collapsed,
         undefined,
@@ -147,28 +147,28 @@ export class SubAgentsProvider implements vscode.TreeDataProvider<SubAgentItem> 
 }
 
 /**
- * Tree item for sub-agents
+ * Tree item for skills
  */
-export class SubAgentItem extends vscode.TreeItem {
+export class SkillItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly agentInfo?: SubAgentInfo,
+    public readonly skillInfo?: SkillInfo,
     public readonly isGroup: boolean = false,
-    public readonly children: SubAgentItem[] = [],
+    public readonly children: SkillItem[] = [],
     public readonly rootKind?: 'project' | 'user'
   ) {
     super(label, collapsibleState);
 
-    if (agentInfo) {
-      this.tooltip = this.buildTooltip(agentInfo);
-      this.description = agentInfo.description || '';
-      this.iconPath = new vscode.ThemeIcon('robot');
-      this.contextValue = 'subAgent';
+    if (skillInfo) {
+      this.tooltip = this.buildTooltip(skillInfo);
+      this.description = skillInfo.description || '';
+      this.iconPath = new vscode.ThemeIcon('library');
+      this.contextValue = 'skill';
       this.command = {
         command: 'ccexp.openFile',
         title: vscode.l10n.t('Open file'),
-        arguments: [agentInfo.path]
+        arguments: [skillInfo.path]
       };
     } else if (isGroup) {
       this.iconPath = this.getGroupIcon();
@@ -188,25 +188,20 @@ export class SubAgentItem extends vscode.TreeItem {
     return new vscode.ThemeIcon('folder');
   }
 
-  private buildTooltip(info: SubAgentInfo): string {
-    let tooltip = vscode.l10n.t('Agent: {0}', info.agentName);
-    tooltip += `\n${vscode.l10n.t('Path: {0}', info.path)}`;
+  private buildTooltip(info: SkillInfo): string {
+    let tooltip = info.skillName;
+    tooltip += `\n\n${vscode.l10n.t('Path: {0}', info.path)}`;
     if (info.description) {
       tooltip += `\n\n${info.description}`;
-    }
-    if (info.tools && info.tools.length > 0) {
-      tooltip += `\n\n${vscode.l10n.t('Tools: {0}', info.tools.join(', '))}`;
     }
     return tooltip;
   }
 
-  // Return children of the group
-  getChildItems(): SubAgentItem[] {
+  getChildItems(): SkillItem[] {
     return this.children;
   }
 }
 
-// Factory function
-export function createSubAgentsProvider(): SubAgentsProvider {
-  return new SubAgentsProvider();
+export function createSkillsProvider(): SkillsProvider {
+  return new SkillsProvider();
 }

@@ -71,6 +71,16 @@
       {
         "command": "ccexp.createClaudeMd",
         "title": "%command.createClaudeMd%"
+      },
+      {
+        "command": "ccexp.viewAsTree",
+        "title": "%command.viewAsTree%",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "ccexp.viewAsFlat",
+        "title": "%command.viewAsFlat%",
+        "icon": "$(list-flat)"
       }
     ],
     "viewsContainers": {
@@ -97,6 +107,10 @@
           "name": "%view.subAgents%"
         },
         {
+          "id": "ccexp.skills",
+          "name": "%view.skills%"
+        },
+        {
           "id": "ccexp.settings",
           "name": "%view.settings%"
         }
@@ -113,6 +127,16 @@
           "command": "ccexp.createSlashCommand",
           "when": "view == ccexp.slashCommands",
           "group": "navigation"
+        },
+        {
+          "command": "ccexp.viewAsTree",
+          "when": "view =~ /ccexp\\./ && config.ccexp.viewMode != tree",
+          "group": "navigation@10"
+        },
+        {
+          "command": "ccexp.viewAsFlat",
+          "when": "view =~ /ccexp\\./ && config.ccexp.viewMode == tree",
+          "group": "navigation@10"
         }
       ],
       "view/item/context": [
@@ -140,6 +164,15 @@
           "type": "boolean",
           "default": true,
           "description": "%config.autoRefresh.description%"
+        },
+        "ccexp.viewMode": {
+          "type": "string",
+          "enum": [
+            "flat",
+            "tree"
+          ],
+          "default": "flat",
+          "description": "%config.viewMode.description%"
         }
       }
     }

@@ -1,5 +1,4 @@
 import * as fs from 'fs/promises';
-import * as path from 'path';
 import fg from 'fast-glob';
 import type { ClaudeFileInfo, ScanOptions } from '../types';
 

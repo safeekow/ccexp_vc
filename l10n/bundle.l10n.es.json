@@ -41,6 +41,7 @@
   "No settings files found": "No se encontraron archivos de configuración",
   "JSON format is invalid": "El formato JSON no es válido",
   "invalid": "inválido",
+  "No skills found": "No se encontraron skills",
   "No sub-agents found": "No se encontraron sub-agentes",
   "Agent: {0}": "Agente: {0}",
   "Path: {0}": "Ruta: {0}",

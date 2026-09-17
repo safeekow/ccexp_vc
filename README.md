@@ -46,6 +46,14 @@ Manage custom agents
 - Display agent name, description, and available tools
 - Show project/user scope
 
+### 🧠 Skills Management
+
+Manage Claude Code skills
+
+- Detect skill manifests from `.claude/skills/**/SKILL.md`
+- Show skill names and descriptions
+- Show project/user scope
+
 ### ⚙️ Settings File Management
 
 Manage JSON configuration files
@@ -83,13 +91,15 @@ Click a file in the tree view to open it in the editor.
 | `ccexp.showHiddenFiles` | Show hidden files | `false` |
 | `ccexp.scanRecursively` | Recursively scan subdirectories | `true` |
 | `ccexp.autoRefresh` | Auto refresh on file changes | `true` |
+| `ccexp.viewMode` | Show files in `flat` or `tree` layout inside each Project/User group | `flat` |
 
 ## Supported Files
 
 | Type | Project | User |
 |------|---------|------|
-| CLAUDE.md | `./CLAUDE.md`, `./CLAUDE.local.md` | `~/.claude/CLAUDE.md` |
+| CLAUDE.md | `./CLAUDE.md`, `./CLAUDE.local.md`, `.claude/**/CLAUDE.md`, `.claude/**/CLAUDE.local.md` | `~/.claude/CLAUDE.md` |
 | Slash Commands | `.claude/commands/**/*.md` | `~/.claude/commands/**/*.md` |
+| Skills | `.claude/skills/**/SKILL.md` | `~/.claude/skills/**/SKILL.md` |
 | Sub-Agents | `.claude/agents/**/*.md` | `~/.claude/agents/**/*.md` |
 | Settings | `.claude/settings.json` | `~/.claude/settings.json`, `~/.claude.json` |
 
@@ -98,6 +108,7 @@ Click a file in the tree view to open it in the editor.
 If you're using **Claude Code** (Anthropic's AI coding assistant), this extension makes it easy to:
 - **Discover** all your Claude Code configuration files in one place
 - **Organize** slash commands by namespace
+- **Browse** skills alongside commands, agents, and settings
 - **Manage** sub-agents and their configurations
 - **Edit** CLAUDE.md files without navigating complex directory structures
 - **Create** new commands and configurations with guided wizards

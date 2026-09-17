@@ -42,6 +42,7 @@
   "No settings files found": "未找到设置文件",
   "JSON format is invalid": "JSON 格式无效",
   "invalid": "无效",
+  "No skills found": "未找到技能",
   "No sub-agents found": "未找到子代理",
   "Agent: {0}": "代理: {0}",
   "Path: {0}": "路径: {0}",

@@ -10,6 +10,8 @@ export type ClaudeFileType =
   | 'user-memory-local'     // ユーザーの~/.claude/CLAUDE.local.md
   | 'project-command'       // プロジェクトのスラッシュコマンド
   | 'user-command'          // ユーザーのスラッシュコマンド
+  | 'project-skill'         // プロジェクトのスキル
+  | 'user-skill'            // ユーザーのスキル
   | 'project-settings'      // プロジェクトのsettings.json
   | 'project-settings-local' // プロジェクトのsettings.local.json
   | 'user-settings'         // ユーザーのsettings.json
@@ -33,6 +35,8 @@ export interface ClaudeFileInfo {
   namespace?: string;
   description?: string;
   hasArgs?: boolean;
+  // スキル固有
+  skillName?: string;
   // 設定ファイル固有
   isValid?: boolean;
   // サブエージェント固有
@@ -47,6 +51,13 @@ export interface SlashCommandInfo extends ClaudeFileInfo {
   namespace?: string;
   description?: string;
   hasArgs: boolean;
+}
+
+// スキル情報
+export interface SkillInfo extends ClaudeFileInfo {
+  type: 'project-skill' | 'user-skill';
+  skillName: string;
+  description?: string;
 }
 
 // 設定ファイル情報
@@ -81,6 +92,7 @@ export interface FileGroup {
 export const FILE_SIZE_LIMITS = {
   CLAUDE_MD: 1024 * 1024,      // 1MB
   SLASH_COMMAND: 512 * 1024,   // 512KB
+  SKILL: 512 * 1024,           // 512KB
   SETTINGS: 1024 * 1024,       // 1MB
   SUBAGENT: 100 * 1024,        // 100KB
 } as const;
@@ -88,9 +100,16 @@ export const FILE_SIZE_LIMITS = {
 // ファイルパターン
 export const CLAUDE_FILE_PATTERNS = {
   // CLAUDE.mdファイル
-  CLAUDE_MD: ['**/CLAUDE.md', '**/CLAUDE.local.md'],
+  CLAUDE_MD: [
+    '**/CLAUDE.md',
+    '**/CLAUDE.local.md',
+    '**/.claude/**/CLAUDE.md',
+    '**/.claude/**/CLAUDE.local.md',
+  ],
   // スラッシュコマンド
   SLASH_COMMANDS: ['**/.claude/commands/**/*.md', '**/commands/**/*.md'],
+  // スキル
+  SKILLS: ['**/.claude/skills/**/SKILL.md'],
   // 設定ファイル
   SETTINGS: ['**/.claude/settings.json', '**/.claude/settings.local.json'],
   // サブエージェント
@@ -101,6 +120,7 @@ export const CLAUDE_FILE_PATTERNS = {
 export const HOME_CLAUDE_PATTERNS = {
   CLAUDE_MD: ['.claude/CLAUDE.md', '.claude/CLAUDE.local.md'],
   COMMANDS: ['.claude/commands/**/*.md'],
+  SKILLS: ['.claude/skills/**/SKILL.md'],
   SETTINGS: ['.claude/settings.json', '.claude/settings.local.json'],
   AGENTS: ['.claude/agents/**/*.md'],
 } as const;

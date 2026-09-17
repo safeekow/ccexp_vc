@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { slashCommandScanner } from '../scanners';
 import type { SlashCommandInfo, ScanOptions } from '../types';
+import { getHomeDir } from '../utils/paths';
+import { buildPathTree, type PathTreeNode } from '../utils/tree';
 
 /**
  * Tree view provider for slash commands
@@ -41,7 +43,6 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
 
   async getChildren(element?: SlashCommandItem): Promise<SlashCommandItem[]> {
     if (element) {
-      // Return children of a group
       if (element.isGroup) {
         return element.getChildItems();
       }
@@ -52,32 +53,40 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
       await this.loadCommands();
     }
 
-    // Group by scope
     const projectCommands = this.commands.filter(c => c.scope === 'project');
     const userCommands = this.commands.filter(c => c.scope === 'user');
+    const viewMode = vscode.workspace.getConfiguration('ccexp').get<string>('viewMode', 'flat');
 
     const items: SlashCommandItem[] = [];
 
-    // Project commands
     if (projectCommands.length > 0) {
-      items.push(new SlashCommandItem(
-        vscode.l10n.t('Project ({0})', projectCommands.length),
-        vscode.TreeItemCollapsibleState.Expanded,
-        undefined,
-        true,
-        projectCommands
-      ));
+      items.push(
+        viewMode === 'tree'
+          ? this.createTreeRootItem(vscode.l10n.t('Project ({0})', projectCommands.length), projectCommands, this.workspacePath || '', 'project')
+          : new SlashCommandItem(
+              vscode.l10n.t('Project ({0})', projectCommands.length),
+              vscode.TreeItemCollapsibleState.Expanded,
+              undefined,
+              true,
+              this.buildFlatItems(projectCommands),
+              'project'
+            )
+      );
     }
 
-    // User commands
     if (userCommands.length > 0) {
-      items.push(new SlashCommandItem(
-        vscode.l10n.t('User (~/.claude/commands/) ({0})', userCommands.length),
-        vscode.TreeItemCollapsibleState.Expanded,
-        undefined,
-        true,
-        userCommands
-      ));
+      items.push(
+        viewMode === 'tree'
+          ? this.createTreeRootItem(vscode.l10n.t('User (~/.claude/commands/) ({0})', userCommands.length), userCommands, getHomeDir(), 'user')
+          : new SlashCommandItem(
+              vscode.l10n.t('User (~/.claude/commands/) ({0})', userCommands.length),
+              vscode.TreeItemCollapsibleState.Expanded,
+              undefined,
+              true,
+              this.buildFlatItems(userCommands),
+              'user'
+            )
+      );
     }
 
     if (items.length === 0) {
@@ -92,6 +101,50 @@ export class SlashCommandsProvider implements vscode.TreeDataProvider<SlashComma
 
     return items;
   }
+
+  private buildFlatItems(commands: SlashCommandInfo[]): SlashCommandItem[] {
+    return commands.map((cmd) => new SlashCommandItem(
+      cmd.namespace ? `/${cmd.namespace}:${cmd.commandName}` : `/${cmd.commandName}`,
+      vscode.TreeItemCollapsibleState.None,
+      cmd
+    ));
+  }
+
+  private createTreeRootItem(
+    label: string,
+    commands: SlashCommandInfo[],
+    basePath: string,
+    rootKind: 'project' | 'user'
+  ): SlashCommandItem {
+    return new SlashCommandItem(
+      label,
+      vscode.TreeItemCollapsibleState.Expanded,
+      undefined,
+      true,
+      this.buildTreeItems(buildPathTree(commands, basePath)),
+      rootKind
+    );
+  }
+
+  private buildTreeItems(nodes: PathTreeNode<SlashCommandInfo>[]): SlashCommandItem[] {
+    return nodes.map((node) => {
+      if (node.item) {
+        return new SlashCommandItem(
+          node.label,
+          vscode.TreeItemCollapsibleState.None,
+          node.item
+        );
+      }
+
+      return new SlashCommandItem(
+        node.label,
+        vscode.TreeItemCollapsibleState.Collapsed,
+        undefined,
+        true,
+        this.buildTreeItems(node.children)
+      );
+    });
+  }
 }
 
 /**
@@ -103,7 +156,8 @@ export class SlashCommandItem extends vscode.TreeItem {
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     public readonly commandInfo?: SlashCommandInfo,
     public readonly isGroup: boolean = false,
-    public readonly children: SlashCommandInfo[] = []
+    public readonly children: SlashCommandItem[] = [],
+    public readonly rootKind?: 'project' | 'user'
   ) {
     super(label, collapsibleState);
 
@@ -118,9 +172,21 @@ export class SlashCommandItem extends vscode.TreeItem {
         arguments: [commandInfo.path]
       };
     } else if (isGroup) {
-      this.iconPath = new vscode.ThemeIcon('folder');
+      this.iconPath = this.getGroupIcon();
       this.contextValue = 'group';
     }
+  }
+
+  private getGroupIcon(): vscode.ThemeIcon {
+    if (this.rootKind === 'project') {
+      return new vscode.ThemeIcon('git-branch');
+    }
+
+    if (this.rootKind === 'user') {
+      return new vscode.ThemeIcon('account');
+    }
+
+    return new vscode.ThemeIcon('folder');
   }
 
   private buildTooltip(info: SlashCommandInfo): string {
@@ -160,43 +226,7 @@ export class SlashCommandItem extends vscode.TreeItem {
 
   // Return children of the group
   getChildItems(): SlashCommandItem[] {
-    // Further group by namespace
-    const byNamespace = new Map<string, SlashCommandInfo[]>();
-
-    for (const cmd of this.children) {
-      const ns = cmd.namespace || '';
-      if (!byNamespace.has(ns)) {
-        byNamespace.set(ns, []);
-      }
-      byNamespace.get(ns)!.push(cmd);
-    }
-
-    const items: SlashCommandItem[] = [];
-
-    // Commands without namespace
-    const rootCommands = byNamespace.get('') || [];
-    for (const cmd of rootCommands) {
-      items.push(new SlashCommandItem(
-        `/${cmd.commandName}`,
-        vscode.TreeItemCollapsibleState.None,
-        cmd
-      ));
-    }
-
-    // Commands with namespace
-    for (const [ns, cmds] of byNamespace.entries()) {
-      if (ns === '') continue;
-
-      for (const cmd of cmds) {
-        items.push(new SlashCommandItem(
-          `/${ns}:${cmd.commandName}`,
-          vscode.TreeItemCollapsibleState.None,
-          cmd
-        ));
-      }
-    }
-
-    return items;
+    return this.children;
   }
 }
 

@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { getClaudeHomeDir, getCommandsDir, getClaudeMdPath, getSettingsPath } from '../utils/paths';
+import { getClaudeHomeDir, getCommandsDir } from '../utils/paths';
 
 /**
  * Open file command

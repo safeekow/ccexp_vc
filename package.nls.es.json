@@ -4,11 +4,15 @@
   "command.openFile": "Claude Code Explorer: Abrir archivo",
   "command.createSlashCommand": "Claude Code Explorer: Crear comando slash",
   "command.createClaudeMd": "Claude Code Explorer: Crear CLAUDE.md",
+  "command.viewAsTree": "Ver como árbol",
+  "command.viewAsFlat": "Ver como lista plana",
   "view.claudeFiles": "Archivos CLAUDE.md",
   "view.slashCommands": "Comandos Slash",
   "view.subAgents": "Sub-agentes",
+  "view.skills": "Skills",
   "view.settings": "Archivos de configuración",
   "config.showHiddenFiles.description": "Si se deben mostrar los archivos ocultos",
   "config.scanRecursively.description": "Si se deben escanear los subdirectorios de forma recursiva",
-  "config.autoRefresh.description": "Si se debe volver a escanear automáticamente cuando cambian los archivos"
+  "config.autoRefresh.description": "Si se debe volver a escanear automáticamente cuando cambian los archivos",
+  "config.viewMode.description": "Controla si los archivos se muestran como una lista plana o como un árbol de directorios dentro de cada grupo Proyecto/Usuario"
 }

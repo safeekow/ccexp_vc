@@ -41,6 +41,7 @@
   "No settings files found": "設定ファイルが見つかりません",
   "JSON format is invalid": "JSONの形式が無効です",
   "invalid": "無効",
+  "No skills found": "スキルが見つかりません",
   "No sub-agents found": "サブエージェントが見つかりません",
   "Agent: {0}": "エージェント: {0}",
   "Path: {0}": "パス: {0}",

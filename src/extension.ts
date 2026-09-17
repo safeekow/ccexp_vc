@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import {
   createClaudeFilesProvider,
   createSlashCommandsProvider,
+  createSkillsProvider,
   createSettingsProvider,
   createSubAgentsProvider,
   ClaudeFilesProvider,
   SlashCommandsProvider,
+  SkillsProvider,
   SettingsProvider,
   SubAgentsProvider
 } from './providers';
@@ -13,6 +15,7 @@ import { openFile, createSlashCommand, createClaudeMd } from './commands';
 
 let claudeFilesProvider: ClaudeFilesProvider;
 let slashCommandsProvider: SlashCommandsProvider;
+let skillsProvider: SkillsProvider;
 let settingsProvider: SettingsProvider;
 let subAgentsProvider: SubAgentsProvider;
 
@@ -25,6 +28,7 @@ export function activate(context: vscode.ExtensionContext): void {
   // Create providers
   claudeFilesProvider = createClaudeFilesProvider();
   slashCommandsProvider = createSlashCommandsProvider();
+  skillsProvider = createSkillsProvider();
   settingsProvider = createSettingsProvider();
   subAgentsProvider = createSubAgentsProvider();
 
@@ -32,6 +36,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(
     vscode.window.registerTreeDataProvider('ccexp.claudeFiles', claudeFilesProvider),
     vscode.window.registerTreeDataProvider('ccexp.slashCommands', slashCommandsProvider),
+    vscode.window.registerTreeDataProvider('ccexp.skills', skillsProvider),
     vscode.window.registerTreeDataProvider('ccexp.subAgents', subAgentsProvider),
     vscode.window.registerTreeDataProvider('ccexp.settings', settingsProvider)
   );
@@ -45,6 +50,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('ccexp.refresh', () => {
       claudeFilesProvider.loadFiles();
       slashCommandsProvider.loadCommands();
+      skillsProvider.loadSkills();
       subAgentsProvider.loadAgents();
       settingsProvider.loadSettings();
       vscode.window.showInformationMessage(vscode.l10n.t('Claude Code Explorer: Rescan completed'));
@@ -64,6 +70,14 @@ export function activate(context: vscode.ExtensionContext): void {
       createClaudeMd().then(() => {
         claudeFilesProvider.loadFiles();
       });
+    }),
+
+    vscode.commands.registerCommand('ccexp.viewAsTree', async () => {
+      await setViewMode('tree');
+    }),
+
+    vscode.commands.registerCommand('ccexp.viewAsFlat', async () => {
+      await setViewMode('flat');
     })
   );
 
@@ -101,8 +115,17 @@ export function activate(context: vscode.ExtensionContext): void {
 function refreshAll(): void {
   claudeFilesProvider.loadFiles();
   slashCommandsProvider.loadCommands();
+  skillsProvider.loadSkills();
   subAgentsProvider.loadAgents();
   settingsProvider.loadSettings();
+}
+
+async function setViewMode(viewMode: 'flat' | 'tree'): Promise<void> {
+  await vscode.workspace.getConfiguration('ccexp').update(
+    'viewMode',
+    viewMode,
+    vscode.ConfigurationTarget.Global
+  );
 }
 
 /**

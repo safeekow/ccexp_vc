@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { settingsScanner } from '../scanners';
 import type { SettingsInfo, ScanOptions } from '../types';
+import { getHomeDir } from '../utils/paths';
+import { buildPathTree, type PathTreeNode } from '../utils/tree';
 
 /**
  * Tree view provider for settings files
@@ -41,7 +43,6 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
 
   async getChildren(element?: SettingsItem): Promise<SettingsItem[]> {
     if (element) {
-      // Return children of a group
       if (element.isGroup) {
         return element.getChildItems();
       }
@@ -52,32 +53,48 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
       await this.loadSettings();
     }
 
-    // Group by scope
     const projectSettings = this.settings.filter(s => s.scope === 'project');
     const userSettings = this.settings.filter(s => s.scope === 'user');
+    const viewMode = vscode.workspace.getConfiguration('ccexp').get<string>('viewMode', 'flat');
 
     const items: SettingsItem[] = [];
 
-    // Project settings
     if (projectSettings.length > 0) {
-      items.push(new SettingsItem(
-        vscode.l10n.t('Project'),
-        vscode.TreeItemCollapsibleState.Expanded,
-        undefined,
-        true,
-        projectSettings
-      ));
+      items.push(
+        viewMode === 'tree'
+          ? this.createTreeRootItem(vscode.l10n.t('Project'), projectSettings, this.workspacePath || '', 'project')
+          : new SettingsItem(
+              vscode.l10n.t('Project'),
+              vscode.TreeItemCollapsibleState.Expanded,
+              undefined,
+              true,
+              projectSettings.map(setting => new SettingsItem(
+                path.basename(setting.path),
+                vscode.TreeItemCollapsibleState.None,
+                setting
+              )),
+              'project'
+            )
+      );
     }
 
-    // User settings
     if (userSettings.length > 0) {
-      items.push(new SettingsItem(
-        vscode.l10n.t('User (~/.claude)'),
-        vscode.TreeItemCollapsibleState.Expanded,
-        undefined,
-        true,
-        userSettings
-      ));
+      items.push(
+        viewMode === 'tree'
+          ? this.createTreeRootItem(vscode.l10n.t('User (~/.claude)'), userSettings, getHomeDir(), 'user')
+          : new SettingsItem(
+              vscode.l10n.t('User (~/.claude)'),
+              vscode.TreeItemCollapsibleState.Expanded,
+              undefined,
+              true,
+              userSettings.map(setting => new SettingsItem(
+                path.basename(setting.path),
+                vscode.TreeItemCollapsibleState.None,
+                setting
+              )),
+              'user'
+            )
+      );
     }
 
     if (items.length === 0) {
@@ -92,6 +109,42 @@ export class SettingsProvider implements vscode.TreeDataProvider<SettingsItem> {
 
     return items;
   }
+
+  private createTreeRootItem(
+    label: string,
+    settings: SettingsInfo[],
+    basePath: string,
+    rootKind: 'project' | 'user'
+  ): SettingsItem {
+    return new SettingsItem(
+      label,
+      vscode.TreeItemCollapsibleState.Expanded,
+      undefined,
+      true,
+      this.buildTreeItems(buildPathTree(settings, basePath)),
+      rootKind
+    );
+  }
+
+  private buildTreeItems(nodes: PathTreeNode<SettingsInfo>[]): SettingsItem[] {
+    return nodes.map((node) => {
+      if (node.item) {
+        return new SettingsItem(
+          node.label,
+          vscode.TreeItemCollapsibleState.None,
+          node.item
+        );
+      }
+
+      return new SettingsItem(
+        node.label,
+        vscode.TreeItemCollapsibleState.Collapsed,
+        undefined,
+        true,
+        this.buildTreeItems(node.children)
+      );
+    });
+  }
 }
 
 /**
@@ -103,7 +156,8 @@ export class SettingsItem extends vscode.TreeItem {
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     public readonly settingsInfo?: SettingsInfo,
     public readonly isGroup: boolean = false,
-    public readonly children: SettingsInfo[] = []
+    public readonly children: SettingsItem[] = [],
+    public readonly rootKind?: 'project' | 'user'
   ) {
     super(label, collapsibleState);
 
@@ -118,9 +172,21 @@ export class SettingsItem extends vscode.TreeItem {
         arguments: [settingsInfo.path]
       };
     } else if (isGroup) {
-      this.iconPath = new vscode.ThemeIcon('folder');
+      this.iconPath = this.getGroupIcon();
       this.contextValue = 'group';
     }
+  }
+
+  private getGroupIcon(): vscode.ThemeIcon {
+    if (this.rootKind === 'project') {
+      return new vscode.ThemeIcon('git-branch');
+    }
+
+    if (this.rootKind === 'user') {
+      return new vscode.ThemeIcon('account');
+    }
+
+    return new vscode.ThemeIcon('folder');
   }
 
   private buildTooltip(info: SettingsInfo): string {
@@ -152,11 +218,7 @@ export class SettingsItem extends vscode.TreeItem {
 
   // Return children of the group
   getChildItems(): SettingsItem[] {
-    return this.children.map(setting => new SettingsItem(
-      path.basename(setting.path),
-      vscode.TreeItemCollapsibleState.None,
-      setting
-    ));
+    return this.children;
   }
 }
 

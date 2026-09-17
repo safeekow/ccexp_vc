@@ -4,11 +4,15 @@
   "command.openFile": "Claude Code Explorer: ファイルを開く",
   "command.createSlashCommand": "Claude Code Explorer: スラッシュコマンドを作成",
   "command.createClaudeMd": "Claude Code Explorer: CLAUDE.mdを作成",
+  "command.viewAsTree": "ツリー表示",
+  "command.viewAsFlat": "フラット表示",
   "view.claudeFiles": "CLAUDE.md ファイル",
   "view.slashCommands": "スラッシュコマンド",
   "view.subAgents": "サブエージェント",
+  "view.skills": "スキル",
   "view.settings": "設定ファイル",
   "config.showHiddenFiles.description": "隠しファイルを表示するかどうか",
   "config.scanRecursively.description": "サブディレクトリを再帰的にスキャンするかどうか",
-  "config.autoRefresh.description": "ファイル変更時に自動的に再スキャンするかどうか"
+  "config.autoRefresh.description": "ファイル変更時に自動的に再スキャンするかどうか",
+  "config.viewMode.description": "各 Project/User グループ内でファイルをフラット表示するか、ディレクトリツリーで表示するかを切り替えます"
 }

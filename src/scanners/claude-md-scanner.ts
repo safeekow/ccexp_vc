@@ -3,7 +3,7 @@ import * as fs from 'fs/promises';
 import { BaseScanner } from './base-scanner';
 import type { ClaudeFileInfo, ClaudeFileType, ScanOptions, FileScope } from '../types';
 import { FILE_SIZE_LIMITS, CLAUDE_FILE_PATTERNS } from '../types';
-import { getClaudeHomeDir, getHomeDir, isUserPath } from '../utils/paths';
+import { getClaudeHomeDir, isUserPath } from '../utils/paths';
 
 /**
  * CLAUDE.mdファイルスキャナー
